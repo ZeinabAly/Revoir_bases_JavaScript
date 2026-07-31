@@ -9,17 +9,18 @@ import { addProductModalContent, handleProductSubmit } from './src/database/addP
 
 import {handleEditProduct} from './src/database/editProductForm.js';
 
-import {filterProductsBySearch, filterProductsByCategory, filterProductsByPrice, filterProductsByStock} from './src/database/filterProducts.js';
+import {refreshFilteredProducts, filterState, resetFilters, updateProductCount} from './src/database/filterProducts.js';
 
 
 
 // RECUPERER ET AFFICHER TOUS LES PRODUITS
-let products = [];
-let filteredProducts = [];
+export let products = [];
+export let filteredProducts = [];
 
 export async function refreshProducts() {
    ({data: products} = await getAllProducts());
    displayProducts(products);
+   updateProductCount(products.length);
 }
 // AFFICHER LES PRODUITS AU CHARGEMENT DE LA PAGE
 await refreshProducts();
@@ -28,33 +29,17 @@ await refreshProducts();
 let categories = await getAllCategories();
 
 // APPLIQUER LES FILTRES
-const searchInputs = document.querySelectorAll(".searchInput");
+export const searchInputs = document.querySelectorAll(".searchInput");
 const categorySelect = document.getElementById("categorySelect");
 const priceRange = document.getElementById("priceRange");
 const stockCheckbox = document.getElementById("stockCheckbox");
 
 
-function displayAucunProduitMessage(filteredProducts) {
-   const productList = document.getElementById("productList");
-
-   if (filteredProducts.length === 0) {
-      productList.innerHTML = "";
-      const noResultsMessage = document.createElement("p");
-      noResultsMessage.textContent = "Aucun produit trouvé.";
-      noResultsMessage.classList.add("no-results-message");
-      productList.appendChild(noResultsMessage);
-   } else {
-      displayProducts(filteredProducts); 
-   }
-}
-
 
 searchInputs.forEach(input => {
-   input.addEventListener("input", async () => {
-      const searchTerm = input.value.toLowerCase();
-      filteredProducts = filterProductsBySearch(products, searchTerm);
-      // displayProducts(filteredProducts)
-      displayAucunProduitMessage(filteredProducts)
+   input.addEventListener("input", async (e) => {
+      filterState.search = e.target.value.toLowerCase();
+      refreshFilteredProducts();
    });
 
 });
@@ -82,19 +67,67 @@ categories.forEach(cat => {
 // GERER LE FILTRE PAR CATEGORIE
 categoryFilters.forEach(catfilter => {
    catfilter.addEventListener("change", () => {
-      const selectedCategories = Array.from(document.querySelectorAll(".category-checkbox:checked"))
+      filterState.selectedCategories = Array.from(document.querySelectorAll(".category-checkbox:checked"))
                                        .map(checkbox => parseInt(checkbox.value));
-      filteredProducts = filterProductsByCategory(products, selectedCategories);
-      displayAucunProduitMessage(filteredProducts);
-      console.log(filteredProducts);
-      
-      
+   
+      refreshFilteredProducts();
    });
 });
 
 
+// FILTRE DE PRIX
+let minPriceInputs = document.querySelectorAll('.minPrice');
+let maxPriceInputs = document.querySelectorAll('.maxPrice');
+let minPrice = 0;
+let maxPrice = Infinity;
 
-                             
+
+minPriceInputs.forEach((min) => {
+   min.addEventListener("input", (e) => {      
+      filterState.minPrice = e.target.value;
+      refreshFilteredProducts();
+   })
+});
+maxPriceInputs.forEach(max => {
+   max.addEventListener("input", (e) => {
+      filterState.maxPrice = e.target.value;
+      refreshFilteredProducts();
+   })
+});
+
+let sortSelects = document.querySelectorAll('select[name="tri"]');
+
+// ORDRE CROISSANT ET DECROISSANT (NOM ET PRIX)
+sortSelects.forEach(sortSelect => {
+   sortSelect.addEventListener("change", (e) => {
+      const [field, order] = e.target.value.split("-"); // ["prix", "asc"]
+   
+      if(field === "nom"){
+         filterState.orderName = e.target.value;
+         refreshFilteredProducts();
+      }else{
+         filterState.orderPrice = e.target.value;
+         refreshFilteredProducts();
+      }
+   });
+})
+      
+// REINITIALISER LES FILTRES
+const btnResetFiilters = document.getElementById("resetFilters");
+
+btnResetFiilters.addEventListener("click", ()=>{
+   resetFilters();
+    document.querySelectorAll(".category-checkbox").forEach(cb => cb.checked = false);
+
+   // interface — vider les champs recherche et prix
+   searchInputs.forEach(input => input.value = "");
+   minPriceInputs.forEach(input => input.value = "");
+   maxPriceInputs.forEach(input => input.value = "");
+
+   // interface — remettre les <select> de tri sur leur première option
+   sortSelects.forEach(select => select.selectedIndex = 0);
+   refreshFilteredProducts();
+})
 
 // GERER LE BOUTON AJOUTER PRODUIT
 // Ouvrir et fermer la modal de product
@@ -124,8 +157,6 @@ btnAddProduct.addEventListener("click", () => {
       let {data: products} = await getAllProducts();
       handleProductSubmit(products);
    })
-
-
 
 });
 

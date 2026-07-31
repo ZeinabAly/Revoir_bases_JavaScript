@@ -1,11 +1,20 @@
+import {addProduct, getProduct, getAllProducts, updateProduct, deleteProduct, displayProducts}
+ from './productCRUD.js';
 
-// export function filterProducts(products, searchTerm, selectedCategory) {
-//     return products.filter(product => {
-//         const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
-//         const matchesCategory = selectedCategory ? product.category_id === selectedCategory : true;
-//         return matchesSearch && matchesCategory;
-//     });
-// }
+function displayAucunProduitMessage(filteredProducts) {
+   const productList = document.getElementById("productList");
+
+   if (filteredProducts.length === 0) {
+      productList.innerHTML = "";
+      const noResultsMessage = document.createElement("p");
+      noResultsMessage.textContent = "Aucun produit trouvé.";
+      noResultsMessage.classList.add("no-results-message");
+      productList.appendChild(noResultsMessage);
+   } else {
+      displayProducts(filteredProducts); 
+   }
+}
+
 
 // Gerer la barre de recherche
 export function filterProductsBySearch(products, searchTerm) {
@@ -40,15 +49,32 @@ export function filterProductsByStock(products, minStock, maxStock) {
     });
 }
 
+export function filtrerByAvailableStock(){
+    return products.filter(product =>{
+        return product.stock >= 1
+    })
+}
 
-export function applyFilters(products, searchTerm, selectedCategory, minPrice, maxPrice, minStock, maxStock) {
+export function orderByPrice(products, order="asc"){
+    return [...products].sort((a,b) => {
+        return order === "asc" ? a.price - b.price : b.price - a.price 
+    })
+}
+
+export function orderByName(products, order="asc"){
+    return [...products].sort((a, b) => {
+        return order === "asc" ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name);
+    })
+}
+
+export function applyFilters(products, searchTerm, selectedCategories, minPrice, maxPrice, minStock, maxStock, orderName, orderPrice) {
     let filteredProducts = products;
 
     if (searchTerm) {
         filteredProducts = filterProductsBySearch(filteredProducts, searchTerm);
     }
-    if (selectedCategory) {
-        filteredProducts = filterProductsByCategory(filteredProducts, selectedCategory);
+    if (selectedCategories.length > 0) {
+        filteredProducts = filterProductsByCategory(filteredProducts, selectedCategories);
     }
     if (minPrice || maxPrice) {
         filteredProducts = filterProductsByPrice(filteredProducts, minPrice, maxPrice);
@@ -56,5 +82,59 @@ export function applyFilters(products, searchTerm, selectedCategory, minPrice, m
     if (minStock || maxStock) {
         filteredProducts = filterProductsByStock(filteredProducts, minStock, maxStock);
     }
+    if (orderName) {
+        const [field, order] = orderName.split("-")
+        filteredProducts = orderByName(filteredProducts, order);
+    }else{
+        const [field, order] = orderPrice.split("-")
+        filteredProducts = orderByPrice(filteredProducts, order);
+    }
     return filteredProducts;
+}
+
+
+export const filterState = {
+   search: "",
+   selectedCategories: [],
+   minPrice: null,
+   maxPrice: null,
+   minStock: null,
+   maxStock: null,
+   orderName: "asc",
+   orderPrice: "asc",
+};
+
+export async function refreshFilteredProducts() {
+    // RECUPERER LES DONNEES
+    const {data: products} = await getAllProducts();
+    const filteredProducts = applyFilters(
+      products,
+      filterState.search,
+      filterState.selectedCategories,
+      filterState.minPrice,
+      filterState.maxPrice,
+      filterState.minStock,
+      filterState.maxStock,
+      filterState.orderName,
+      filterState.orderPrice,
+   );
+   displayAucunProduitMessage(filteredProducts);
+   updateProductCount(filteredProducts.length);
+}
+
+export function resetFilters() {
+    filterState.search = "";
+    filterState.selectedCategories = [];
+    filterState.minPrice = null;
+    filterState.maxPrice = null;
+    filterState.minStock = null;
+    filterState.maxStock = null;
+    filterState.orderName = "asc";
+    filterState.orderPrice = "asc";
+}
+
+export function updateProductCount(count) {
+    const divProductCount = document.getElementById("product-count");
+    divProductCount.innerHTML = count === 0 ? "Aucun produit" : count > 1 ? count + " produits" : count + " produit";
+    
 }

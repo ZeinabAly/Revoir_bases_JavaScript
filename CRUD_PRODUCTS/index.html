@@ -102,6 +102,7 @@
     }
     .no-results-message{
         @apply text-center text-slate-500 text-sm py-4;
+        grid-area: 1 / 3 ;
     }
   }
 </style>
@@ -155,9 +156,9 @@
       <div class="filter-group">
         <p class="label">Prix (€)</p>
         <div class="flex items-center gap-2">
-          <input type="number" min="0" placeholder="Min" class="input !py-1.5 text-sm">
+          <input type="number" min="0" placeholder="Min" class="minPrice input !py-1.5 text-sm">
           <span class="text-slate-400">-</span>
-          <input type="number" min="0" placeholder="Max" class="input !py-1.5 text-sm">
+          <input type="number" min="0" placeholder="Max" class="maxPrice input !py-1.5 text-sm">
         </div>
       </div>
 
@@ -171,11 +172,11 @@
 
       <div class="mb-0 border-b-0 pb-0">
         <p class="label">Trier par</p>
-        <select class="input text-sm">
-          <option>Nom (A → Z)</option>
-          <option>Nom (Z → A)</option>
-          <option>Prix croissant</option>
-          <option>Prix décroissant</option>
+        <select id="tri" name="tri" class="input text-sm">
+          <option value="nom-asc">Nom (A → Z)</option>
+          <option value="nom-desc">Nom (Z → A)</option>
+          <option value="prix-asc">Prix croissant</option>
+          <option value="prix-desc">Prix décroissant</option>
         </select>
       </div>
     </aside>
@@ -186,7 +187,7 @@
     <div class="sticky top-20">
       <div class="mb-4 flex items-center justify-between">
         <h2 class="font-display text-base font-semibold text-slate-700">Filtres</h2>
-        <button class="text-xs font-medium text-amber-400 hover:text-amber-300">Réinitialiser</button>
+        <button type="button" id="resetFilters" class="text-xs font-medium text-amber-400 hover:text-amber-300">Réinitialiser</button>
       </div>
 
       <div class="filter-group">
@@ -199,9 +200,9 @@
       <div class="filter-group">
         <p class="label">Prix (€)</p>
         <div class="flex items-center gap-2">
-          <input type="number" min="0" placeholder="Min" class="input !py-1.5 text-sm">
+          <input type="number" min="0" placeholder="Min" class="minPrice input !py-1.5 text-sm">
           <span class="text-slate-400">-</span>
-          <input type="number" min="0" placeholder="Max" class="input !py-1.5 text-sm">
+          <input type="number" min="0" placeholder="Max" class="maxPrice input !py-1.5 text-sm">
         </div>
       </div>
 
@@ -215,11 +216,11 @@
 
       <div class="mb-0 border-b-0 pb-0">
         <p class="label">Trier par</p>
-        <select class="input text-sm">
-          <option>Nom (A → Z)</option>
-          <option>Nom (Z → A)</option>
-          <option>Prix croissant</option>
-          <option>Prix décroissant</option>
+        <select id="tri" name="tri" class="input text-sm">
+          <option value="nom-asc">Nom (A → Z)</option>
+          <option value="nom-desc">Nom (Z → A)</option>
+          <option value="prix-asc">Prix croissant</option>
+          <option value="prix-desc">Prix décroissant</option>
         </select>
       </div>
 
@@ -231,10 +232,9 @@
 
   <!-- ===================== LISTE DE PRODUITS ===================== -->
   <main class="min-w-0 flex-1">
-    <p class="mb-4 text-sm text-slate-500" id="product-count">8 produits</p>
+    <p class="mb-4 text-sm text-slate-500" id="product-count"></p>
 
     <div class="productList" id="productList">
-
       <!-- LISTE DES PRODUITS INSEREE AUTOMATIQUEMENT -->
 
     </div>
