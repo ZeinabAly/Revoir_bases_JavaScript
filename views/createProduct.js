@@ -1,6 +1,3 @@
-import {addProduct, displayProducts, getAllProducts} from './productCRUD.js';
-import {refreshProducts} from "./../../app.js"
-
 export function addProductModalContent(){
     return `
     
@@ -56,68 +53,3 @@ export function addProductModalContent(){
         </div>
     `;
 }
-
-
-
-
-// Notification 
-export function showNotification(message, type) {
-   let notifContent = document.getElementById("notifContent");
-   const notification = document.createElement("div");
-   notification.className = `productNotif`;
-   notification.textContent = message; 
-   notifContent.appendChild(notification);
-
-   setTimeout(() => {
-      notification.remove();
-   }, 2000);
-}
-
-
-export async function handleProductSubmit(){
-    // Gérer l'ajout d'un nouveau produit
-    let addProductForm = document.getElementById("add_product_form");
-
-    const formData = new FormData(addProductForm);
-
-   if(!formData.get("name") || !formData.get("category") || !formData.get("price") || !formData.get("image")) {
-      alert("Veuillez remplir tous les champs obligatoires.");
-      return;
-   }
-
-   if(formData.get("name").trim().length < 3){
-      alert("Le nom doit comporter au moins 3 caractères");
-      return;
-   }   
-
-   let imageFile;
-   if(formData.get("image")){
-      imageFile = formData.get("image");
-   }
-
-   // Convertir en objet
-   const productData = Object.fromEntries(formData.entries());
-
-
-   try{
-      const product = await addProduct({name: productData.name,
-         category_id: productData.category,
-         price: productData.price,
-         image: imageFile,
-         description : productData.description
-      })
-
-      showNotification(product.message, 'success');
-
-      // Vider le formulaire
-      addProductForm.reset();
-
-      // RECHARGER LA LISTE DES PRODUITS
-      await refreshProducts();
-      
-   } catch (error) {
-      console.error("Erreur lors de l'ajout du produit :", error);
-      alert("Une erreur est survenue lors de l'ajout du produit.");
-   }
-}
-

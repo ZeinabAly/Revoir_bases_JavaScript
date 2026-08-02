@@ -1,8 +1,9 @@
-import {getCategoryById} from "./categories.js"
+import Category from "../models/Category.js";
+
 
 export async function productDisplay(product) {
     const imageUrl = product.image ? URL.createObjectURL(product.image) : null;
-    const category = await getCategoryById(parseInt(product.category_id));
+    const {data: category} = await Category.getCategoryById(parseInt(product.category_id));
     
     return `<article class="card" data-product-id="${product.id}">
         <div class="flex items-center justify-center bg-slate-100 text-5xl">

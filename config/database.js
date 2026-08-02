@@ -1,4 +1,4 @@
-let database;
+let database = null;
 
 export function databaseConnection() {
     return new Promise((resolve, reject) => {
