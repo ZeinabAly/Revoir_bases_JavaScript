@@ -1,3 +1,18 @@
+export function readCreateForm(form) {
+    const formData = new FormData(form);
+    return {
+        name: formData.get("name"),
+        category_id: formData.get("category"),
+        price: formData.get("price"),
+        image: formData.get("image"),
+        description: formData.get("description"),
+    };
+}
+
+export function resetCreateForm(form) {
+    form.reset();
+}
+
 export function addProductModalContent(){
     return `
     
