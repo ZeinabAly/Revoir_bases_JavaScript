@@ -9,3 +9,4 @@ export async function displayProducts(products) {
       productList.insertAdjacentHTML("afterbegin", productHTML);
    }
 }
+

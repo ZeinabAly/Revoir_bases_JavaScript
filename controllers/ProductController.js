@@ -15,12 +15,13 @@ export default class ProductController{
 
 
     // FONCTION POUR CREER UN NOUVEAU PRODUIT
-    create = async (data) => {
+    static create = async (data) => {
         try {
-            const product = new Product(null, data.name, data.price, data.category_id, data.description, data.image);
-            const result = await product.create();
+            const product = new Product(data.name, data.price, data.category_id, data.description, data.image);
+           
+            const result = await Product.create(product);
             showNotification(result.message, "success");
-            await this.getAll(); // recharge la liste via le controller
+            await this.getAll(); // recharger la liste via le controller
             return { success: true };
         } catch (error) {
             console.error("Erreur lors de l'ajout du produit :", error);

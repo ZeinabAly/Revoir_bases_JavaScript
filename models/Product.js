@@ -3,8 +3,7 @@ import handleRequest from "../utils/handleRequest.js";
 import { validateProduct } from "../utils/Validator.js";
 
 export default class Product{
-    constructor(id, name, price, category_id, description, image, stock, created_at, updated_at, deleted_at) {
-        this.id = id;
+    constructor(name, price, category_id, description, image, stock, created_at, updated_at, deleted_at) {
         this.name = name;
         this.price = price;
         this.category_id = category_id;
@@ -32,8 +31,16 @@ export default class Product{
 
     static async create(product) { 
         validateProduct(product);
+
+        const productData = {
+            ...product,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            deleted_at: null,
+        };
+
         const db = await this.getDB();
-        const request = db.transaction("products", "readwrite").objectStore("products").add(product);
+        const request = db.transaction("products", "readwrite").objectStore("products").add(productData);
         return handleRequest(request, {
             successMessage: "Produit créé avec succès :",
             errorMessage: "Erreur lors de la création du produit :",

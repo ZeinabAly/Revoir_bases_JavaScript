@@ -1,9 +1,13 @@
 import ProductController from "./controllers/ProductController.js";
-import { addProductModalContent, readCreateForm } from "./views/createProduct.js";
+import CategoryController from "./controllers/CategoryController.js";
+import { addProductModalContent, readCreateForm, resetCreateForm } from "./views/createProduct.js";
 
 // Récupérer tous les produits
 const getAllProducts = ProductController.getAll;
 getAllProducts();
+
+const getAllCategories = CategoryController.getAll;
+
 
 
 // GERER LE BOUTON AJOUTER PRODUIT
@@ -16,10 +20,11 @@ btnAddProduct.addEventListener("click", () => {
    modal.classList.remove("showModal");
    
    modalPanel.innerHTML = addProductModalContent();
-   populateCategoriesSelect(categories)
+   getAllCategories();
 
    // FERMETURE DE LA MODALE
    let btnsCloseModal = document.querySelectorAll('.modalClose');
+   
    btnsCloseModal.forEach((btn) => {
       btn.addEventListener("click", () => {
          modal.classList.add("showModal")
@@ -32,7 +37,7 @@ btnAddProduct.addEventListener("click", () => {
    addProductForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const data = readCreateForm(addProductForm);
-        const result = await productController.create(data);
+        const result = await ProductController.create(data);
         if (result.success) resetCreateForm(addProductForm);
    })
 

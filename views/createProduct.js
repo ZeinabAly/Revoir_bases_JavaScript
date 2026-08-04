@@ -2,8 +2,8 @@ export function readCreateForm(form) {
     const formData = new FormData(form);
     return {
         name: formData.get("name"),
-        category_id: formData.get("category"),
-        price: formData.get("price"),
+        category_id: parseInt(formData.get("category")),
+        price: parseFloat(formData.get("price")),
         image: formData.get("image"),
         description: formData.get("description"),
     };
