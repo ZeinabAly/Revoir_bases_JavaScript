@@ -1,5 +1,5 @@
 import Category from "../models/Category.js";
-import { populateCategoriesSelect } from "../views/categories/populateCategoriesSelect.js";
+import { populateCategoriesSelect } from "../views/categories/populateCategoriesContent.js";
 
 export default class CategoryController{
     
@@ -9,6 +9,6 @@ export default class CategoryController{
 
     static getAll = async () => {
         const {data: categories} = await Category.getAllCategories();
-        return populateCategoriesSelect(categories);
+        return categories;
     }
 }

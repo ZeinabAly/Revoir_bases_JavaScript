@@ -21,7 +21,8 @@ export default class Product{
 
     static async getAll() {
         const db = await this.getDB();
-        const request = db.transaction("products", "readonly").objectStore("products").getAll();
+        const index = db.transaction("products", "readonly").objectStore("products").index("by_deleted_at");
+        const request = index.getAll(IDBKeyRange.only(null));
         return handleRequest(request, {
             successMessage: "Tous les produits récupérés :",
             errorMessage: "Erreur lors de la récupération de tous les produits :",

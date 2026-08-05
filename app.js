@@ -1,12 +1,14 @@
 import ProductController from "./controllers/ProductController.js";
 import CategoryController from "./controllers/CategoryController.js";
 import { addProductModalContent, readCreateForm, resetCreateForm } from "./views/createProduct.js";
+import { populateCategoriesSelect, populateCategoriesFilter } from "./views/categories/populateCategoriesContent.js";
 
 // Récupérer tous les produits
 const getAllProducts = ProductController.getAll;
 getAllProducts();
 
-const getAllCategories = CategoryController.getAll;
+const categories = await CategoryController.getAll();
+
 
 
 
@@ -20,7 +22,7 @@ btnAddProduct.addEventListener("click", () => {
    modal.classList.remove("showModal");
    
    modalPanel.innerHTML = addProductModalContent();
-   getAllCategories();
+   populateCategoriesSelect(categories);
 
    // FERMETURE DE LA MODALE
    let btnsCloseModal = document.querySelectorAll('.modalClose');
@@ -44,4 +46,5 @@ btnAddProduct.addEventListener("click", () => {
 });
 
 
-// CREER UN NOUVEAU PRODUIT
+// AFFICHER LA LISTE DES CATEGORIES DANS LES FILTRES
+populateCategoriesFilter(categories)
