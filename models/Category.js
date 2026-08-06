@@ -33,5 +33,21 @@ export default class Category{
             errorMessage: "Erreur lors de la recupération de la catégorie",
             type: "getById",
         });
-    } 
+    }
+    
+    static async create(category){
+        const db = await this.getDB();
+        const categoryData = {
+            ...category,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            deleted_at: null,
+        }
+        const request = db.transaction("categories", "readwrite").objectStore("categories").add(categoryData);
+        return handleRequest(request, {
+            successMessage: "Categorie ajouté avec succès",
+            errorMessage: "Erreur lors de l'ajout",
+            type: "create"
+        })
+    }
 }

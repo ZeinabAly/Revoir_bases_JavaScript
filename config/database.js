@@ -2,7 +2,7 @@ let database = null;
 
 export function databaseConnection() {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open("boutique", 3);
+        const request = indexedDB.open("boutique", 1);
 
         request.onupgradeneeded = (e) =>{
             database = e.target.result;

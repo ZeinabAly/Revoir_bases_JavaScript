@@ -21,13 +21,16 @@ export default class Product{
 
     static async getAll() {
         const db = await this.getDB();
-        const index = db.transaction("products", "readonly").objectStore("products").index("by_deleted_at");
-        const request = index.getAll(IDBKeyRange.only(null));
-        return handleRequest(request, {
+        const request = db.transaction("products", "readonly").objectStore("products").getAll();
+
+        const result = await handleRequest(request, {
             successMessage: "Tous les produits récupérés :",
             errorMessage: "Erreur lors de la récupération de tous les produits :",
             type: "getAll"
         });
+
+        result.data = result.data.filter((pd) =>  pd.deleted_at === null);
+        return result;
     }
 
     static async create(product) { 
@@ -49,11 +52,15 @@ export default class Product{
         });
     }
 
-    // async read(id) {
-    //     const db = await this.getDB();
-    //     const request = db.transaction("products", "readonly").objectStore("products");
-    //     return request.get(id);
-    // }
+    static async getById(id) {
+        const db = await this.getDB();
+        const request = db.transaction("products", "readonly").objectStore("products").get(id);
+        return handleRequest(request, {
+            successMessage: "Produit retrouvé",
+            errorMessage: "Error : produit introuvable",
+            type: "getById"
+        })
+    }
 
 
     // async update(product) {
@@ -62,9 +69,20 @@ export default class Product{
     //     return request.put(product);
     // }
 
-    // async delete(id) {
-    //     const db = await this.getDB();
-    //     const request = db.transaction("products", "readwrite").objectStore("products");
-    //     return request.delete(id);
-    // }
+    static async delete(id) {
+        const db = await this.getDB();
+        // ON NE SUPPRIME PLUS, ON PASSE JUSTE DELETE_AT A LA DATA DE L'INSTANT
+        const product = await this.getById(id);
+        if (!product) {
+            throw new Error("Produit introuvable");
+        }
+        product.deleted_at = new Date().toISOString();
+        const request = db.transaction("products", "readwrite").objectStore("products").put(product);
+
+        return handleRequest(request, {
+            successMessage: "Produit supprimé",
+            errorMessage: "Error lors la suppression",
+            type: "delete"
+        })
+    }
 }
