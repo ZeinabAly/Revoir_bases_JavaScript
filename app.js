@@ -2,19 +2,29 @@ import ProductController from "./controllers/ProductController.js";
 import CategoryController from "./controllers/CategoryController.js";
 import { addProductModalContent, readCreateForm, resetCreateForm } from "./views/createProduct.js";
 import { populateCategoriesSelect, populateCategoriesFilter } from "./views/categories/populateCategoriesContent.js";
-import DBSeed from "./config/dbSeed.js";
+import DBSeed from "./config/DBSeed.js";
 import { createCategories } from "./Factory/CategoryFactory.js";
 import { createProducts } from "./Factory/ProductFactory.js";
 import {refreshFilteredProducts, filterState, resetFilters, updateProductCount} from "./utils/filterProducts.js";
 import { displayProducts } from "./views/products.js";
+import Product from "./models/Product.js";
 
 
-const products = [];
+
+// PEUPLER LA BASE DE DONNEES SI JAMAIS ELLE EST VIDE 
+await DBSeed.applyFactory("categories", createCategories);
+await DBSeed.applyFactory("products", createProducts);
+
+
+let products = [];
 export async function refreshProducts() {
    ({data: products} = await Product.getAll());
    displayProducts(products);
    updateProductCount(products.length);
 }
+
+
+
 
 // Récupérer tous les produits
 const getAllProducts = ProductController.getAll;
@@ -201,7 +211,6 @@ productList.addEventListener("click", async (e) => {
       // À implémenter : confirmer et supprimer
       if (confirm("Êtes-vous sûr ?")) {
          await Product.delete(productId);
-         let {data: products} = await Product.getAll();
          await refreshProducts();
       }
      
@@ -213,7 +222,3 @@ productList.addEventListener("click", async (e) => {
 
 
 
-
-// PEUPLER LA BASE DE DONNEES SI JAMAIS ELLE EST VIDE 
-await DBSeed.applyFactory("categories", createCategories);
-await DBSeed.applyFactory("products", createProducts);

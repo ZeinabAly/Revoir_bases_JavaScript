@@ -72,7 +72,8 @@ export default class Product{
     static async delete(id) {
         const db = await this.getDB();
         // ON NE SUPPRIME PLUS, ON PASSE JUSTE DELETE_AT A LA DATA DE L'INSTANT
-        const product = await this.getById(id);
+        const result = await this.getById(id);
+        const product = result.data;
         if (!product) {
             throw new Error("Produit introuvable");
         }
