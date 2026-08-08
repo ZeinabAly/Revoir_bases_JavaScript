@@ -8,6 +8,8 @@ import { createProducts } from "./Factory/ProductFactory.js";
 import {refreshFilteredProducts, filterState, resetFilters, updateProductCount} from "./utils/filterProducts.js";
 import { displayProducts } from "./views/products.js";
 import Product from "./models/Product.js";
+import { editProduct } from "./views/editProductForm.js";
+import { readEditForm } from "./views/editProductForm.js";
 
 
 
@@ -178,33 +180,35 @@ productList.addEventListener("click", async (e) => {
    const modalPanel = document.querySelector(".modal-panel");
    
    if (action === "edit") {
-      // modal.classList.remove("showModal")
+      modal.classList.remove("showModal")
       
-      // const {data: product} = await getProduct(productId);
+      const {data: product} = await Product.getById(productId);
       
       
-      // if (product) {
-      //    const categoryId = parseInt(product.category_id);
-      //    modalPanel.innerHTML = editProduct(product);
-      //    populateCategoriesSelect(categories, categoryId);
-      //    let {data: products} = await getAllProducts();
-      //    await refreshProducts();
-      // }
+      if (product) {
+         const categoryId = parseInt(product.category_id);
+         modalPanel.innerHTML = editProduct(product);
+         populateCategoriesSelect(categories, categoryId);
+         await refreshProducts();
+      }
 
       // // TRAITEMENT DU FORMULAIRE DE MODIFICATION
-      // const editProductForm = document.getElementById("edit_product_form");
-      // editProductForm.addEventListener("submit", async (e) => {
-      //    e.preventDefault();
-      //    await handleEditProduct(product);
-      // });
+      const editProductForm = document.getElementById("edit_product_form");
+      
+      editProductForm.addEventListener("submit", async (e) => {
+         e.preventDefault();
+         const data = readEditForm(product, editProductForm);
+         await ProductController.update(product.id, data);
+        
+      });
 
       // // FERMETURE DE LA MODALE
-      // let btnsCloseModal = document.querySelectorAll('.modalClose');
-      // btnsCloseModal.forEach((btn) => {
-      //    btn.addEventListener("click", () => {
-      //       modal.classList.add("showModal")
-      //    })
-      // });
+      let btnsCloseModal = document.querySelectorAll('.modalClose');
+      btnsCloseModal.forEach((btn) => {
+         btn.addEventListener("click", () => {
+            modal.classList.add("showModal")
+         })
+      });
       
    } else if (action === "delete") {
       console.log("Supprimer le produit :", productId);

@@ -46,7 +46,7 @@ export default class Product{
         const db = await this.getDB();
         const request = db.transaction("products", "readwrite").objectStore("products").add(productData);
         return handleRequest(request, {
-            successMessage: "Produit créé avec succès :",
+            successMessage: "Produit créé avec succès",
             errorMessage: "Erreur lors de la création du produit :",
             type: "create"
         });
@@ -63,11 +63,27 @@ export default class Product{
     }
 
 
-    // async update(product) {
-    //     const db = await this.getDB();
-    //     const request = db.transaction("products", "readwrite").objectStore("products");
-    //     return request.put(product);
-    // }
+    static async update(product, data) {
+        const productData = {
+            ...product,               // garde tout ce qui existe déjà (stock, created_at, deleted_at...)
+            name: data.name,
+            category_id: data.category_id,  // rappel : aussi à corriger, data.category → data.category_id
+            price: data.price,
+            image: data.image,
+            description: data.description,
+            updated_at: new Date().toISOString(),
+        };
+
+        validateProduct(productData);  // sur les données finales, pas l'ancien produit
+
+        const db = await this.getDB();
+        const request = db.transaction("products", "readwrite").objectStore("products").put(productData);
+        return handleRequest(request, {
+            successMessage: "Produit modifié avec succès",
+            errorMessage: "Erreur lors de la modification du produit :",
+            type: "edit"
+        });
+    }
 
     static async delete(id) {
         const db = await this.getDB();

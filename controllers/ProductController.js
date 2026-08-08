@@ -29,4 +29,21 @@ export default class ProductController{
             return { success: false };
         }
     };
+
+    static update = async (productId, data) => {
+        try {
+            const result = await Product.getById(productId);
+            const product = result.data;
+            if (!product) throw new Error("Produit introuvable");
+
+            const updateResult = await Product.update(product, data);
+            showNotification(updateResult.message, "success");
+            await this.getAll();
+            return { success: true };
+        } catch (error) {
+            console.error("Erreur lors de la modification du produit :", error);
+            showNotification(error.message, "error");
+            return { success: false };
+        }
+    };
 }
