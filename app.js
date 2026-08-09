@@ -142,7 +142,17 @@ sortSelects.forEach(sortSelect => {
       }
    });
 })
-      
+
+// FILTRE PAR STOCK
+const stockFilters = document.querySelectorAll(".enStock");
+
+stockFilters.forEach(stockFilter => {
+   stockFilter.addEventListener("change", () => {
+      filterState.inStockOnly = stockFilter.checked;
+      refreshFilteredProducts();
+   });
+});
+
 // REINITIALISER LES FILTRES
 const btnResetFilters = document.getElementById("resetFilters");
 

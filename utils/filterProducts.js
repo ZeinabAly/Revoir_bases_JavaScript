@@ -51,7 +51,7 @@ export function filterProductsByStock(products, minStock, maxStock) {
     });
 }
 
-export function filtrerByAvailableStock(){
+export function filtrerByAvailableStock(products) {
     return products.filter(product =>{
         return product.stock >= 1
     })
@@ -69,7 +69,7 @@ export function orderByName(products, order="asc"){
     })
 }
 
-export function applyFilters(products, searchTerm, selectedCategories, minPrice, maxPrice, minStock, maxStock, orderName, orderPrice) {
+export function applyFilters(products, searchTerm, selectedCategories, minPrice, maxPrice, minStock, maxStock, orderName, orderPrice, inStockOnly) {
     let filteredProducts = products;
 
     if (searchTerm) {
@@ -87,7 +87,11 @@ export function applyFilters(products, searchTerm, selectedCategories, minPrice,
     if (orderName) {
         const [ , order] = orderName.split("-")
         filteredProducts = orderByName(filteredProducts, order);
-    }else{
+    }
+    if (inStockOnly) {
+        filteredProducts = filtrerByAvailableStock(filteredProducts);
+    }
+    else{
         const [ , order] = orderPrice.split("-")
         filteredProducts = orderByPrice(filteredProducts, order);
     }
@@ -104,6 +108,7 @@ export const filterState = {
    maxStock: null,
    orderName: "asc",
    orderPrice: "asc",
+   inStockOnly: false,
 };
 
 export async function refreshFilteredProducts() {
@@ -119,6 +124,7 @@ export async function refreshFilteredProducts() {
       filterState.maxStock,
       filterState.orderName,
       filterState.orderPrice,
+      filterState.inStockOnly,
    );
    displayAucunProduitMessage(filteredProducts);
    updateProductCount(filteredProducts.length);
@@ -131,12 +137,12 @@ export function resetFilters() {
     filterState.maxPrice = null;
     filterState.minStock = null;
     filterState.maxStock = null;
-    filterState.orderName = "asc";
-    filterState.orderPrice = "asc";
+    filterState.orderName = "";
+    filterState.orderPrice = "";
+    filterState.inStockOnly = false;
 }
 
 export function updateProductCount(count) {
     const divProductCount = document.getElementById("product-count");
-    divProductCount.innerHTML = count === 0 ? "Aucun produit" : count > 1 ? count + " produits" : count + " produit";
-    
+    divProductCount.innerHTML = count === 0 ? "Aucun produit" : count > 1 ? count + " produits" : count + " produit";  
 }

@@ -32,9 +32,15 @@ export function editProduct(product) {
           </div>
         </div>
 
-        <div>
-          <label class="label" for="product-image">Image du produit</label>
-          <input id="product-image" name="image" type="file" class="input">
+        <div class="grid grid-cols-1 gap-3">
+            <div>
+                <label class="label" for="product-stock">Stock</label>
+                <input id="product-stock" name="stock" type="number" min="0" class="input" value="${product.stock || 1}">
+            </div> 
+            <div>
+                <label class="label" for="product-image">Image du produit</label>
+                <input id="product-image" name="image" type="file" maxlength="2" class="input">
+            </div>
         </div>
 
         <div>
@@ -70,6 +76,10 @@ export function readEditForm(product, form){
   let price = product.price;
   if(formData.get("price")) price = Number(formData.get("price"));
   
+  // Gerer stock
+  let stock = product.stock;
+  if(formData.get("stock")) stock = Number(formData.get("stock"));
+  
   // Gestion de l'image
   let imageFile = product.image;
 
@@ -90,64 +100,7 @@ export function readEditForm(product, form){
     category_id: category,
     price: price,
     image: imageFile,
+    stock: stock,
     description: description
   };
 }
-
-// export async function handleEditProduct(product) {
-//     const editProductForm = document.getElementById("edit_product_form");
-
-//     const formData = new FormData(editProductForm);
-
-//     // Validation
-//     if (
-//         !formData.get("name") ||
-//         !formData.get("category") ||
-//         !formData.get("price")
-//     ) {
-//         alert("Veuillez remplir tous les champs obligatoires.");
-//         return;
-//     }
-
-//     if (formData.get("name").trim().length < 3) {
-//         alert("Le nom doit comporter au moins 3 caractères.");
-//         return;
-//     }
-
-//     // Gestion de l'image
-//     let imageFile = product.image;
-
-//     const newImage = formData.get("image");
-
-//     if (newImage && newImage.size > 0) {
-//         // Libérer l'ancienne URL si elle existe
-//         if (product.image) {
-//             URL.revokeObjectURL(product.image);
-//         }
-
-//         imageFile = newImage;
-//     }
-
-//     try {
-
-//         const updatedProduct = await updateProduct({
-//             id: product.id,
-//             name: formData.get("name").trim(),
-//             category_id: Number(formData.get("category")),
-//             price: Number(formData.get("price")),
-//             image: imageFile,
-//             description: formData.get("description")
-//         });
-        
-
-//         showNotification(updatedProduct.message, "success");
-
-//         // Recharger la liste
-//         const { data: products } = await getAllProducts();
-//         await refreshProducts();
-
-//     } catch (error) {
-//         console.error("Erreur lors de la modification du produit :", error);
-//         alert("Une erreur est survenue lors de la modification du produit.");
-//     }
-// }

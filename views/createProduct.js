@@ -1,17 +1,4 @@
-export function readCreateForm(form) {
-    const formData = new FormData(form);
-    return {
-        name: formData.get("name"),
-        category_id: parseInt(formData.get("category")),
-        price: parseFloat(formData.get("price")),
-        image: formData.get("image"),
-        description: formData.get("description"),
-    };
-}
 
-export function resetCreateForm(form) {
-    form.reset();
-}
 
 export function addProductModalContent(){
     return `
@@ -45,13 +32,13 @@ export function addProductModalContent(){
             </div>
 
             <div class="grid grid-cols-1 gap-3">
-                <!-- <div>
-                <label class="label" for="product-stock">Stock</label>
-                <input id="product-stock" type="number" min="0" class="input" placeholder="0">
-                </div> -->
                 <div>
-                <label class="label" for="product-image">Image du produit</label>
-                <input id="product-image" name="image" type="file" maxlength="2" class="input">
+                    <label class="label" for="product-stock">Stock</label>
+                    <input id="product-stock" name="stock" type="number" min="0" class="input" placeholder="0">
+                </div> 
+                <div>
+                    <label class="label" for="product-image">Image du produit</label>
+                    <input id="product-image" name="image" type="file" maxlength="2" class="input">
                 </div>
             </div>
 
@@ -67,4 +54,21 @@ export function addProductModalContent(){
             </form>
         </div>
     `;
+}
+
+
+export function readCreateForm(form) {
+    const formData = new FormData(form);
+    return {
+        name: formData.get("name"),
+        category_id: parseInt(formData.get("category")),
+        price: parseFloat(formData.get("price")),
+        stock: parseInt(formData.get("stock")),
+        image: formData.get("image"),
+        description: formData.get("description"),
+    };
+}
+
+export function resetCreateForm(form) {
+    form.reset();
 }

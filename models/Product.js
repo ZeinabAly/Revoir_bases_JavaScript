@@ -70,6 +70,7 @@ export default class Product{
             category_id: data.category_id,  // rappel : aussi à corriger, data.category → data.category_id
             price: data.price,
             image: data.image,
+            stock: data.stock,
             description: data.description,
             updated_at: new Date().toISOString(),
         };
