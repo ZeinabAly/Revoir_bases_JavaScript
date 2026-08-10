@@ -10,8 +10,8 @@ import { displayProducts } from "./views/products.js";
 import Product from "./models/Product.js";
 import { editProduct } from "./views/editProductForm.js";
 import { readEditForm } from "./views/editProductForm.js";
-
-
+import { showProductDetails } from "./views/show.js";
+import { confirmDeleteContent } from "./views/confirmDelete.js";
 
 // PEUPLER LA BASE DE DONNEES SI JAMAIS ELLE EST VIDE 
 await DBSeed.applyFactory("categories", createCategories);
@@ -179,60 +179,77 @@ const productList = document.getElementById("productList");
 // Etant donné que les données sont chargées via JS, il faut les manipuler après chargement
 productList.addEventListener("click", async (e) => {
    const btn = e.target.closest("button");
-   
-   if (!btn) return; // Si ce n'est pas un bouton, quitter
-   
-   const action = btn.dataset.action;
-   
-   const productId = parseInt(btn.dataset.productId);
+   if (!btn) return;
 
-   
+   const action = btn.dataset.action;
+   const productId = parseInt(btn.dataset.productId);
    const modalPanel = document.querySelector(".modal-panel");
-   
+
    if (action === "edit") {
-      modal.classList.remove("showModal")
-      
+
       const {data: product} = await Product.getById(productId);
-      
-      
+
       if (product) {
          const categoryId = parseInt(product.category_id);
          modalPanel.innerHTML = editProduct(product);
          populateCategoriesSelect(categories, categoryId);
-         await refreshProducts();
       }
 
-      // // TRAITEMENT DU FORMULAIRE DE MODIFICATION
-      const editProductForm = document.getElementById("edit_product_form");
-      
+      modal.classList.remove("showModal");
+
+      // Formulaire nettoyé (cloneNode) avant d'attacher le listener, pour éviter l'accumulation
+      const oldForm = document.getElementById("edit_product_form");
+      const editProductForm = oldForm.cloneNode(true);
+      oldForm.replaceWith(editProductForm);
+
       editProductForm.addEventListener("submit", async (e) => {
          e.preventDefault();
          const data = readEditForm(product, editProductForm);
          await ProductController.update(product.id, data);
-        
       });
 
-      // // FERMETURE DE LA MODALE
-      let btnsCloseModal = document.querySelectorAll('.modalClose');
-      btnsCloseModal.forEach((btn) => {
-         btn.addEventListener("click", () => {
-            modal.classList.add("showModal")
-         })
-      });
+      attachModalCloseListeners();
+
+   } else if (action === "view") {
       
-   } else if (action === "delete") {
-      console.log("Supprimer le produit :", productId);
-      // À implémenter : confirmer et supprimer
-      if (confirm("Êtes-vous sûr ?")) {
+      const {data: product} = await Product.getById(productId);
+      
+      if (product) {
+         modalPanel.innerHTML = showProductDetails(product);
+      }
+      
+      modal.classList.remove("showModal");
+      attachModalCloseListeners();
+
+   } 
+   else if (action === "delete") {
+      const {data: product} = await Product.getById(productId);
+
+      if (product) {
+         modalPanel.innerHTML = confirmDeleteContent(product);
+      }
+
+      modal.classList.remove("showModal");
+      attachModalCloseListeners();
+
+      const confirmBtn = document.getElementById("confirmDeleteBtn");
+      confirmBtn.addEventListener("click", async () => {
          await Product.delete(productId);
          await refreshProducts();
-      }
-     
+         modal.classList.add("showModal");
+      });
    }
-
-
-   
 });
 
-
+// Fonction centralisée pour attacher les boutons de fermeture — nettoie aussi les anciens listeners
+function attachModalCloseListeners() {
+   let btnsCloseModal = document.querySelectorAll('.modalClose');
+   btnsCloseModal.forEach((btn) => {
+      const newBtn = btn.cloneNode(true);
+      btn.replaceWith(newBtn);
+      newBtn.addEventListener("click", () => {
+         modal.classList.add("showModal");
+      });
+   });
+}
 
