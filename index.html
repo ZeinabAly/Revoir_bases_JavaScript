@@ -76,8 +76,9 @@
     }
 
     .modal-panel {
-        @apply w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl 
-            scale-100 transition-transform duration-300 ease-out;
+      @apply w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl 
+          scale-100 transition-transform duration-300 ease-out
+          max-h-[90vh] overflow-y-auto;
     }
 
     .modal.showModal .modal-panel {
@@ -92,8 +93,11 @@
     #notifContent{
         @apply relative;
     }
-    .productNotif{
+    .productSuccessNotif{
         @apply w-full absolute top-0 left-0 z-50 rounded-md bg-green-600 text-white px-4 py-2 text-sm font-medium shadow-md transition-opacity duration-300;
+    }
+    .productErrorNotif{
+        @apply w-full absolute top-0 left-0 z-50 rounded-md bg-red-600 text-white px-4 py-2 text-sm font-medium shadow-md transition-opacity duration-300;
     }
     .productList{
         @apply grid gap-4;
@@ -103,6 +107,9 @@
     .no-results-message{
         @apply text-center text-slate-500 text-sm py-4;
         grid-area: 1 / 3 ;
+    }
+    .error{
+        @apply text-red-500 text-xs mt-1;
     }
   }
 </style>

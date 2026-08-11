@@ -1,5 +1,5 @@
 import Category from "../models/Category.js";
-
+import { substringWithPoints } from "../app.js";
 
 export async function productDisplay(product) {
     const imageUrl = product.image ? URL.createObjectURL(product.image) : null;
@@ -11,11 +11,11 @@ export async function productDisplay(product) {
         </div>
         <div class="flex flex-1 flex-col gap-2 p-4">
         <div class="flex items-start justify-between gap-2">
-            <h3 class="font-display text-sm font-semibold text-slate-800">${product.name}</h3>
+            <h3 class="font-display text-sm font-semibold text-slate-800">${substringWithPoints(product.name, 20)}</h3>
             <span class="badge-stock">${product.stock ?? 1} en stock</span>  
         </div>
         <p class="text-xs text-slate-500">${category ? category.name : 'Catégorie inconnue'}</p>
-        <p class="line-clamp-2 text-xs text-slate-500">${product.description || 'Pas de description'}</p>
+        <p class="line-clamp-2 text-xs text-slate-500">${product.description ? substringWithPoints(product.description, 50) : 'Pas de description'}</p>
         <div class="mt-auto flex items-center justify-between pt-2">
             <span class="font-mono text-base font-semibold text-amber-400">${product.price} €</span>
             <div class="flex gap-1">

@@ -1,24 +1,44 @@
 // Validator functions for product data
 
+// RECUPERER LA BALISE D'ERREUR DE FACON GENERIQUE
+export function displayErrorMessage(inputId, message) {
+    const errorElement = document.getElementById(`${inputId}-error`);
+    if (errorElement) {
+        errorElement.textContent = message;
+    }
+}
+
 export const validateProduct = (product) => {
     const { name, price, category_id, description, image, stock } = product;
-    if (!name || !price || !category_id) {
-        throw new Error("Veuillez remplir les champs obligatoires");
+    let isValid = true;
+
+    if (!name) {
+        displayErrorMessage("name", "Veuillez remplir le nom du produit");
+        isValid = false;
     }
-    if (typeof price !== "number" || price <= 0) {
-        throw new Error("Veuillez saisir un nombre valide");
-    }  
+    if (!category_id) {
+        displayErrorMessage("category_id", "Veuillez choisir la catégorie du produit");
+        isValid = false;
+    }
+    if (!price || typeof price !== "number" || price <= 0) {
+        displayErrorMessage("price", "Veuillez saisir un nombre valide");
+        isValid = false;
+    }
     if (stock && (typeof stock !== "number" || stock < 0)) {
-        throw new Error("Veuillez saisir un nombre valide");
+        displayErrorMessage("stock", "Veuillez saisir un nombre valide");
+        isValid = false;
     }
-
-    // vérifier que c'est bien un type image/*
     if (image && image instanceof Blob && !image.type.startsWith("image/")) {
-        throw new Error("Type Invalide: veuillez choisir un fichier image");
+        displayErrorMessage("image", "Type invalide : veuillez choisir un fichier image");
+        isValid = false;
+    }
+    if (description && typeof description !== "string") {
+        displayErrorMessage("description", "La description doit être une chaîne de caractères");
+        isValid = false;
     }
 
-    if (description && typeof description !== "string") {
-        throw new Error("La description doit être une chaine de caractères");
+    if (!isValid) {
+        throw new Error("Formulaire invalide, Veuillez corriger les champs en rouge");
     }
 
     return true;
