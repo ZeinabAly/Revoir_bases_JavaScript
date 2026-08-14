@@ -26,27 +26,33 @@ export function editProduct(product) {
             <select id="product-category" name="category" class="input modal_categories">
               <option value="">Sélectionner une catégorie</option>
             </select>
+            <p class="error" id="category_id-error"></p>
           </div>
           <div>
             <label class="label" for="product-price">Prix (€) <span class="error">*</span></label>
             <input id="product-price" name="price" type="number" min="0" step="0.01" class="input" value="${product.price || ''}">
+            <p class="error" id="price-error"></p>
           </div>
         </div>
 
         <div class="grid grid-cols-1 gap-3">
             <div>
                 <label class="label" for="product-stock">Stock <span class="error">*</span></label>
-                <input id="product-stock" name="stock" type="number" min="0" class="input" value="${product.stock || 1}">
+                <input id="product-stock" name="stock" type="number" min="1" class="input" value="${product.stock || 1}">
+                <p class="error" id="stock-error"></p>
             </div> 
             <div>
                 <label class="label" for="product-image">Image du produit</label>
                 <input id="product-image" name="image" type="file" maxlength="2" class="input">
-            </div>
+                <p class="error" id="image-error"></p>
+                ${product.image ? `<img src="${product.image}" alt="Image du produit" class="mt-2 w-32 h-32 object-cover rounded-md">` : ''}
+              </div>
         </div>
 
         <div>
           <label class="label" for="product-description">Description</label>
           <textarea id="product-description" name="description" rows="3" class="input resize-none">${product.description || ''}</textarea>
+          <p class="error" id="description-error"></p>
         </div>
 
         <div class="flex justify-end gap-2 pt-2">
@@ -60,48 +66,26 @@ export function editProduct(product) {
 
 export function readEditForm(product, form){
   const formData = new FormData(form);
-  
-  // Gerer le nom
-  let name = product.name;
-  if(formData.get("name")) name = formData.get("name").trim();
-  
-  // Gerer la description
-  let description = product.description;
-  if(formData.get("description")) description = formData.get("description").trim();
 
-  // Gerer category
-  let category = product.category_id;
-  if(formData.get("category")) category = Number(formData.get("category"));
-  
-  // Gerer prix
-  let price = product.price;
-  if(formData.get("price")) price = Number(formData.get("price"));
-  
-  // Gerer stock
-  let stock = product.stock;
-  if(formData.get("stock")) stock = Number(formData.get("stock"));
-  
-  // Gestion de l'image
+  const name = formData.get("name")?.trim() ?? "";
+  const description = formData.get("description")?.trim() ?? "";
+  const category_id = formData.get("category") ? Number(formData.get("category")) : null;
+  const price = formData.get("price") ? Number(formData.get("price")) : null;
+  const stock = formData.get("stock") ? Number(formData.get("stock")) : null;
+
   let imageFile = product.image;
-
   const newImage = formData.get("image");
-
   if (newImage && newImage.size > 0) {
-      // Libérer l'ancienne URL si elle existe
-      if (product.image) {
-          URL.revokeObjectURL(product.image);
-      }
-
       imageFile = newImage;
   }
 
   return {
     id: product.id,
     name: name,
-    category_id: category,
+    category_id: category_id,
     price: price,
-    image: imageFile,
     stock: stock,
+    image: imageFile,
     description: description
   };
 }

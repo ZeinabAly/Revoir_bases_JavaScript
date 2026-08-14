@@ -191,6 +191,7 @@ productList.addEventListener("click", async (e) => {
 
       if (product) {
          const categoryId = parseInt(product.category_id);
+         
          modalPanel.innerHTML = editProduct(product);
          populateCategoriesSelect(categories, categoryId);
       }
