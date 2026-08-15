@@ -19,21 +19,21 @@ function displayAucunProduitMessage(filteredProducts) {
 
 // Gerer la barre de recherche
 export function filterProductsBySearch(products, searchTerm) {
-    return products.filter(product => {
+    return [...products].filter(product => {
         return product.name.toLowerCase().includes(searchTerm.toLowerCase());
     });
 }
 
 // Gérer les filtres a gauche (categories, prix, stock, min/max)
 export function filterProductsByCategory(products, selectedCategories) {
-    return products.filter(product => {
+    return [...products].filter(product => {
         return selectedCategories.length === 0 ? true : selectedCategories.includes(parseInt(product.category_id));
     });
 }
 
 
 export function filterProductsByPrice(products, minPrice, maxPrice) {
-    return products.filter(product => {
+    return [...products].filter(product => {
         const price = parseFloat(product.price);
         const min = minPrice ? parseFloat(minPrice) : 0;
         const max = maxPrice ? parseFloat(maxPrice) : Infinity;
@@ -43,7 +43,7 @@ export function filterProductsByPrice(products, minPrice, maxPrice) {
 
 // PAS NECESSAIRE POUR LE MOMENT, MAIS PEUT ETRE UTILE PLUS TARD
 export function filterProductsByStock(products, minStock, maxStock) {
-    return products.filter(product => {
+    return [...products].filter(product => {
         const stock = parseInt(product.stock);
         const min = minStock ? parseInt(minStock) : 0;
         const max = maxStock ? parseInt(maxStock) : Infinity;
@@ -52,7 +52,7 @@ export function filterProductsByStock(products, minStock, maxStock) {
 }
 
 export function filtrerByAvailableStock(products) {
-    return products.filter(product =>{
+    return [...products].filter(product =>{
         return product.stock >= 1
     })
 }
@@ -70,7 +70,7 @@ export function orderByName(products, order="asc"){
 }
 
 export function applyFilters(products, searchTerm, selectedCategories, minPrice, maxPrice, minStock, maxStock, orderName, orderPrice, inStockOnly) {
-    let filteredProducts = products;
+    let filteredProducts = [...products];
 
     if (searchTerm) {
         filteredProducts = filterProductsBySearch(filteredProducts, searchTerm);
@@ -91,7 +91,7 @@ export function applyFilters(products, searchTerm, selectedCategories, minPrice,
     if (inStockOnly) {
         filteredProducts = filtrerByAvailableStock(filteredProducts);
     }
-    else{
+    if (orderPrice) { 
         const [ , order] = orderPrice.split("-")
         filteredProducts = orderByPrice(filteredProducts, order);
     }
@@ -106,8 +106,8 @@ export const filterState = {
    maxPrice: null,
    minStock: null,
    maxStock: null,
-   orderName: "asc",
-   orderPrice: "asc",
+   orderName: null,
+   orderPrice: null,
    inStockOnly: false,
 };
 
@@ -137,8 +137,8 @@ export function resetFilters() {
     filterState.maxPrice = null;
     filterState.minStock = null;
     filterState.maxStock = null;
-    filterState.orderName = "";
-    filterState.orderPrice = "";
+    filterState.orderName = null;
+    filterState.orderPrice = null;
     filterState.inStockOnly = false;
 }
 

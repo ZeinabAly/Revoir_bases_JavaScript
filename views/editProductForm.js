@@ -38,14 +38,14 @@ export function editProduct(product) {
         <div class="grid grid-cols-1 gap-3">
             <div>
                 <label class="label" for="product-stock">Stock <span class="error">*</span></label>
-                <input id="product-stock" name="stock" type="number" min="1" class="input" value="${product.stock || 1}">
+                <input id="product-stock" name="stock" type="number" min="0" class="input" value="${product.stock || 1}">
                 <p class="error" id="stock-error"></p>
             </div> 
             <div>
                 <label class="label" for="product-image">Image du produit</label>
                 <input id="product-image" name="image" type="file" maxlength="2" class="input">
                 <p class="error" id="image-error"></p>
-                ${product.image ? `<img src="${product.image}" alt="Image du produit" class="mt-2 w-32 h-32 object-cover rounded-md">` : ''}
+                ${product.image ? `<img src="${URL.createObjectURL(product.image)}" alt="Image du produit" class="mt-2 w-32 h-32 object-cover rounded-md">` : ''}
               </div>
         </div>
 

@@ -190,18 +190,20 @@ productList.addEventListener("click", async (e) => {
       const {data: product} = await Product.getById(productId);
 
       if (product) {
-         const categoryId = parseInt(product.category_id);
-         
          modalPanel.innerHTML = editProduct(product);
-         populateCategoriesSelect(categories, categoryId);
       }
 
       modal.classList.remove("showModal");
 
-      // Formulaire nettoyé (cloneNode) avant d'attacher le listener, pour éviter l'accumulation
+      // Clone AVANT de peupler les catégories, pour ne pas perdre la sélection après
       const oldForm = document.getElementById("edit_product_form");
       const editProductForm = oldForm.cloneNode(true);
       oldForm.replaceWith(editProductForm);
+
+      if (product) {
+         const categoryId = parseInt(product.category_id);
+         populateCategoriesSelect(categories, categoryId); // exécuté sur le formulaire final
+      }
 
       editProductForm.addEventListener("submit", async (e) => {
          e.preventDefault();

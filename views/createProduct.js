@@ -37,7 +37,7 @@ export function addProductModalContent(){
             <div class="grid grid-cols-1 gap-3">
                 <div>
                     <label class="label" for="product-stock">Stock <span class="error">*</span></label>
-                    <input id="product-stock" name="stock" type="number" min="1" class="input" placeholder="1">
+                    <input id="product-stock" name="stock" type="number" min="0" class="input" placeholder="1">
                     <p class="error" id="stock-error"></p>
                 </div> 
                 <div>
